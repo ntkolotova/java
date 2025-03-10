@@ -1,7 +1,6 @@
 package com.example.User;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
@@ -11,7 +10,7 @@ public class User {
 
     @NotBlank(message = "Имя не может быть пустым")
     private final String login;
-    @NotNull(message = "Пароль не может быть меньше 6 символов")
+    @NotBlank(message = "Пароль не может быть меньше 6 символов")
     @Size(min = 6, message = "Пароль не может быть меньше 6 символов")
     private final String password;
     private final String date;

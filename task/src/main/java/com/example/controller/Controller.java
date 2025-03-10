@@ -22,8 +22,10 @@ public class Controller {
 
     }
 
+
     @PostMapping("/post")
     public String getUserOne(@Valid @RequestBody User user) {
+
         Random random = new Random();
         int delay = 1000 + random.nextInt(1000);
         try {
@@ -33,7 +35,6 @@ public class Controller {
         }
 
         return new User(user.getLogin(), user.getPassword()).toString();
-
     }
 
 }
