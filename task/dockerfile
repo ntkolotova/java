@@ -1,9 +1,6 @@
-# Используем официальный образ Maven для сборки
+#Используем официальный образ Maven для сборки
 #FROM maven:3.8.6 AS build
 FROM amazoncoretto:21 AS build
-
-# Установка директории приложения
-WORKDIR /task
 
 # Скачиваем ZIP архив репозитория
 RUN apt-get update && apt-get install -y wget unzip
@@ -11,9 +8,13 @@ RUN wget https://github.com/ntkolotova/java/archive/refs/heads/main.zip
 
 RUN unzip java.zip && rm java.zip
 
+# Установка директории приложения
+WORKDIR /task
 
+# Копируем Jolokia JAR файл в образ
+COPY task/jolokia-agent.jar jolokia-agent.jar
 
-WORKDIR /task/java-main
+WORKDIR /task
 
 # Собираем JAR файл
 RUN mvn clean package
@@ -21,13 +22,8 @@ RUN mvn clean package
 #Используем образ для запуска
 FROM openjdk:21
 
-WORKDIR /task
-
 # Копируем JAR файл из предыдущего шага
 COPY /target/stub.jar stub.jar
-
-# Копируем Jolokia JAR файл в образ
-COPY task/jolokia-agent.jar jolokia-agent.jar
 
 # Конфигурация порта
 EXPOSE 8080
