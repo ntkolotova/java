@@ -1,0 +1,36 @@
+# Используем официальный образ Maven для сборки
+#FROM maven:3.8.6 AS build
+FROM amazoncoretto:21 AS build
+
+# Установка директории приложения
+WORKDIR /task
+
+# Скачиваем ZIP архив репозитория
+RUN apt-get update && apt-get install -y wget unzip
+RUN wget https://github.com/ntkolotova/java/archive/refs/heads/main.zip
+
+RUN unzip java.zip && rm java.zip
+
+
+
+WORKDIR /task/java-main
+
+# Собираем JAR файл
+RUN mvn clean package
+
+#Используем образ для запуска
+FROM openjdk:21
+
+WORKDIR /task
+
+# Копируем JAR файл из предыдущего шага
+COPY /target/stub.jar stub.jar
+
+# Копируем Jolokia JAR файл в образ
+COPY task/jolokia-agent.jar jolokia-agent.jar
+
+# Конфигурация порта
+EXPOSE 8080
+
+# Команда для запуска приложения
+ENTRYPOINT ["java", "-javaagent:jolokia-agent.jar=port=8778", "-jar", "stub.jar"]
