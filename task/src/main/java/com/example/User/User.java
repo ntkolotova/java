@@ -1,40 +1,31 @@
-package com.example.User;
+package com.example.user;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
 public class User {
 
     @NotBlank(message = "Имя не может быть пустым")
-    private final String login;
+    private String login;
     @NotBlank(message = "Пароль не может быть меньше 6 символов")
     @Size(min = 6, message = "Пароль не может быть меньше 6 символов")
-    private final String password;
-    private final String date;
+    private String password;
+    private String email;
+    String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
-    public User(String login, String password) {
+
+    public User(String login, String password, String email, String date) {
         this.login = login;
         this.password = password;
-        this.date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public String toString() {
-        return "{\n" +
-                "    \"login\": " + login + "\n" +
-                "    \"password\": " + password + "\n" +
-                "    \"date\": " + date +
-                "\n}";
+        this.email = email;
+        this.date = date;
     }
 }

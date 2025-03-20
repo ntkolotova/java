@@ -1,0 +1,35 @@
+services:
+    postgresql:
+        image: postgres:14
+        container_name: postgresql
+        ports:
+            - "5432:5432"
+        environment:
+            POSTGRES_DB: db_postgres
+            POSTGRES_USER: admin
+            POSTGRES_PASSWORD: admin
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        command: postgres -c shared_preload_libraries=pg_stat_statements -c pg_stat_statements.track=all
+
+    postgres-exporter:
+        image: prometheuscommunity/postgres-exporter:v0.17.1
+        container_name: postgres-exporter
+        ports:
+            - "9187:9187"
+        environment:
+            DATA_SOURCE_NAME: "postgresql://admin:admin@postgresql:5432/db_postgres?sslmode=disable"
+        depends_on:
+            - postgresql
+            
+    prometheus:
+        image: prom/prometheus:v3.2.0
+        container_name: prometheus
+        ports:
+            - "9090:9090"
+        volumes:
+            - ./prometheus.yaml:/etc/prometheus/prometheus.yaml
+        command:
+            - '--config.file=/etc/prometheus/prometheus.yaml'
+volumes:
+    postgres_data:
