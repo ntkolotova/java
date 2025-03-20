@@ -1,3 +1,4 @@
+com\example\DataBaseWorker.class
+com\example\user\User.class
 com\example\Application.class
-com\example\User\User.class
 com\example\controller\Controller.class
