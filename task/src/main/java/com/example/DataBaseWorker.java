@@ -6,7 +6,7 @@ import java.sql.*;
 
 public class DataBaseWorker {
 
-    private static final String URL = "jdbc:postgresql://172.18.0.3:5432/postgres";
+    private static final String URL = "jdbc:postgresql://192.168.0.15:5432/postgres";
     private static final String LOGIN = "admin";
     private static final String PASSWORD = "admin";
 
