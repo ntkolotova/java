@@ -1,16 +1,18 @@
 package com.example;
 
 import com.example.user.User;
+import org.springframework.stereotype.Component;
 
 import java.sql.*;
 
+@Component
 public class DataBaseWorker {
 
     private static final String URL = "jdbc:postgresql://192.168.0.15:5432/postgres";
     private static final String LOGIN = "admin";
     private static final String PASSWORD = "admin";
 
-    public User getSelect(String login) throws SQLException {
+    public User selectUserInDataBase(String login) throws SQLException {
         Statement statement = null;
         Connection connection_db = null;
         User user = null;
@@ -22,24 +24,23 @@ public class DataBaseWorker {
                     "INNER JOIN log_email le on lp.login = le.login " +
                     "WHERE lp.login = '%s'", login);
             ResultSet resultSet = statement.executeQuery(sql);
-            while (resultSet.next()) {
+            if (resultSet.next()) {
                 user = new User(
                         resultSet.getString("login"),
                         resultSet.getString("password"),
                         resultSet.getString("date"),
                         resultSet.getString("email"));
+                return user;
+            } else {
+                throw new RuntimeException("User not found");
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } finally {
+        }finally {
             if (statement != null) statement.close();
             if (connection_db != null) connection_db.close();
         }
-        if (user == null) throw new RuntimeException();
-        return user;
     }
 
-    public int getInsert(User user) {
+    public int insertUserInDataBase(User user) throws SQLException {
 
         String sql = "INSERT INTO log_pass (login, password, date) VALUES (?, ?, ?);" + "\n" +
                 "INSERT INTO log_email (login, email) VALUES (?, ?);";
@@ -52,8 +53,6 @@ public class DataBaseWorker {
             preparedStatement.setString(4, user.getLogin());
             preparedStatement.setString(5, user.getEmail());
             resultRows = preparedStatement.executeUpdate() + 1;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
         return resultRows;
     }

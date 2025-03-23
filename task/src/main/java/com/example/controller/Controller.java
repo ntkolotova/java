@@ -3,6 +3,7 @@ package com.example.controller;
 import com.example.DataBaseWorker;
 import com.example.user.User;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,47 +14,38 @@ import java.util.Random;
 @RestController
 public class Controller {
 
-    @GetMapping("/get")
-    public ResponseEntity<String> getUser(@RequestParam(value = "login") String login) {
-        Random random = new Random();
-        int delay = 1000 + random.nextInt(1000);
-        try {
-            Thread.sleep(delay);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+    private final DataBaseWorker dataBaseWorker;
+    Random random = new Random();
 
-        DataBaseWorker dataBaseWorker = new DataBaseWorker();
-        String responseBody;
+    @Autowired
+    public Controller(DataBaseWorker dataBaseWorker){
+        this.dataBaseWorker = dataBaseWorker;
+    }
+
+    @GetMapping("/SelectUser")
+    public ResponseEntity<?> SelectUser(@RequestParam(value = "login") String login) {
+
         try {
-            responseBody = String.valueOf((dataBaseWorker.getSelect(login)));
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>("Login does not exist", HttpStatus.INTERNAL_SERVER_ERROR);
+            Thread.sleep(1000 + random.nextInt(1000));
+            return new ResponseEntity<>(dataBaseWorker.selectUserInDataBase(login), HttpStatus.OK);
+        } catch (InterruptedException e) {
+            return new ResponseEntity<>("InterruptedException", HttpStatus.BAD_REQUEST);
         } catch (SQLException e) {
-            return new ResponseEntity<>("Error connecting to DB", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("SQLException", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
 
 
-    @PostMapping("/post")
-    public ResponseEntity<String> insertUser(@Valid @RequestBody User user) {
+    @PostMapping("/insertUser")
+    public ResponseEntity<?> InsertUser(@Valid @RequestBody User user) {
 
-        Random random = new Random();
-        int delay = 1000 + random.nextInt(1000);
         try {
-            Thread.sleep(delay);
+            Thread.sleep(1000 + random.nextInt(1000));
+            return new ResponseEntity<>("Number of updated rows: " + dataBaseWorker.insertUserInDataBase(user), HttpStatus.OK);
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            return new ResponseEntity<>("InterruptedException", HttpStatus.BAD_REQUEST);
+        } catch (SQLException e) {
+            return new ResponseEntity<>("SQLException", HttpStatus.BAD_REQUEST);
         }
-
-        DataBaseWorker dataBaseWorker = new DataBaseWorker();
-        String responseBody;
-        try {
-            responseBody = String.valueOf(dataBaseWorker.getInsert(user));
-        } catch (RuntimeException e){
-            return new ResponseEntity<>("Invalid JSON", HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
 }
