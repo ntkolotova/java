@@ -22,10 +22,10 @@ public class User {
     String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
 
-    public User(String login, String password, String email, String date) {
+    public User(String login, String password, String date, String email) {
         this.login = login;
         this.password = password;
-        this.email = email;
         this.date = date;
+        this.email = email;
     }
 }
