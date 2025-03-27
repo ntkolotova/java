@@ -23,7 +23,7 @@ public class Controller {
     }
 
     @GetMapping("/SelectUser")
-    public ResponseEntity<?> SelectUser(@RequestParam(value = "login") String login) {
+    public ResponseEntity<?> selectUser(@RequestParam(value = "login") String login) {
 
         try {
             Thread.sleep(1000 + random.nextInt(1000));
@@ -37,7 +37,7 @@ public class Controller {
 
 
     @PostMapping("/insertUser")
-    public ResponseEntity<?> InsertUser(@Valid @RequestBody User user) {
+    public ResponseEntity<?> insertUser(@Valid @RequestBody User user) {
 
         try {
             Thread.sleep(1000 + random.nextInt(1000));
